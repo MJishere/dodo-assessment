@@ -1,0 +1,5 @@
+[allowlist]
+paths = [
+  '''task1/secrets/sealed-secret.yaml''',
+  '''task2/secrets/sealed-secret.yaml'''
+]
