@@ -16,9 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v3
-
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
