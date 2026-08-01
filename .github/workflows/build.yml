@@ -28,10 +28,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Semgrep
-        uses: returntocorp/semgrep-action@v1
+        uses: semgrep/semgrep-action@v1
         with:
           config: p/ci
-          
+
       - name: Build and push
         run: |
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
