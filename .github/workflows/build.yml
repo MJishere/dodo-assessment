@@ -16,10 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Gitleaks
+      - name: Debug Runner
+        shell: powershell
         run: |
-          gitleaks git . --verbose
-
+          Write-Host "PATH=$env:PATH"
+          Get-Command gitleaks
+          gitleaks version
+      
       - name: Install Semgrep
         run: |
           python3 -m pip install --upgrade pip --quiet
