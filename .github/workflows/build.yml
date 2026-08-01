@@ -27,10 +27,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install Semgrep
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install semgrep
+      
       - name: Run Semgrep
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: p/ci
+        run: |
+          semgrep scan --config p/ci .
 
       - name: Build and push
         run: |
