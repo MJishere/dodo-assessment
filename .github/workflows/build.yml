@@ -26,13 +26,10 @@ jobs:
           semgrep scan --config p/ci .
 
       - name: Run Trivy Filesystem Scan
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          format: table
-          exit-code: 0
-          severity: HIGH,CRITICAL
+        shell: powershell
+        run: |
+          trivy fs . --severity HIGH,CRITICAL
+          
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -50,13 +47,10 @@ jobs:
           docker build -t "$IMAGE" ./task2/app
 
       - name: Run Trivy Image Scan
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: ${{ env.IMAGE }}
-          format: table
-          exit-code: 0
-          severity: HIGH,CRITICAL
-
+        shell: powershell
+        run: |
+          trivy image ${{ env.IMAGE }} --severity HIGH,CRITICAL
+      
       - name: Push Docker Image
         run: |
           docker push ${{ env.IMAGE }}
