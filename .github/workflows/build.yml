@@ -61,12 +61,6 @@ jobs:
           exit-code: 0
           severity: HIGH,CRITICAL
 
-
-      # - name: Build and push
-      #   run: |
-      #     OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-      #     IMAGE=ghcr.io/$OWNER/ledger-api:${{ github.sha }}
-      #     echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-
-      #     docker build -t "$IMAGE" ./task2/app
-      #     docker push "$IMAGE"
+      - name: Push Docker Image
+        run: |
+          docker push ${{ env.IMAGE }}
