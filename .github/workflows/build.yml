@@ -15,6 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -25,7 +30,7 @@ jobs:
       - name: Build and push
         run: |
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE=ghcr.io/$OWNER/ledger-api:latest
+          IMAGE=ghcr.io/$OWNER/ledger-api:${{ github.sha }}
 
           docker build -t "$IMAGE" ./task2/app
           docker push "$IMAGE"
