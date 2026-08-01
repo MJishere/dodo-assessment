@@ -61,6 +61,9 @@ jobs:
           exit-code: 0
           severity: HIGH,CRITICAL
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
       - name: Push Docker Image
         run: |
           docker push ${{ env.IMAGE }}
