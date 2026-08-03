@@ -12,7 +12,10 @@ permissions:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-runner
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
 
     steps:
       - uses: actions/checkout@v4
