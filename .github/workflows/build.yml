@@ -92,12 +92,36 @@ jobs:
         run: |
           docker push ${{ env.IMAGE }}
 
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v3
-
       - name: Sign Container Image
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: |
           cosign sign --yes ${{ env.IMAGE }}
           
+      - name: Update Deployment Image
+        run: |
+          sed -i "s|IMAGE_PLACEHOLDER|${IMAGE}|g" task2/deploy/deployment.yaml
+
+      - name: Deploy to Kind
+        run: |
+          kubectl apply -f task2/deploy/namespace.yaml
+          kubectl apply -f task2/rbac/
+          kubectl apply -f task2/secrets/
+          kubectl apply -f task2/deploy/configmap.yaml
+          kubectl apply -f task2/deploy/deployment.yaml
+          kubectl apply -f task2/deploy/service.yaml
+          kubectl apply -f task2/ingress/     
+            
+      - name: Wait for Rollout
+        run: |
+          kubectl rollout status deployment/ledger-api -n payments --timeout=120s
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods -n payments
+          kubectl get svc -n payments
+          kubectl get ingress -n payments
+
+      - name: Deployment Status
+        run: |
+          kubectl describe deployment ledger-api -n payments

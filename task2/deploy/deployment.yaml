@@ -25,7 +25,7 @@ spec:
 
       containers:
         - name: ledger-api
-          image: ledger-api:starter
+          image: IMAGE_PLACEHOLDER
 
           securityContext:
             allowPrivilegeEscalation: false
@@ -58,7 +58,7 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
 
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
 
           envFrom:
             - configMapRef:
