@@ -25,7 +25,7 @@ spec:
 
       containers:
         - name: ledger-api
-          image: ghcr.io/mjishere/ledger-api:latest
+          image: ghcr.io/mjishere/ledger-api:82130afa1467c76a68bc0986b1f1aa74f67091fe
 
           securityContext:
             allowPrivilegeEscalation: false
