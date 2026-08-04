@@ -3,10 +3,12 @@ name: build
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "task2/deploy/deployment.yaml"
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
   packages: write
   id-token: write
 
@@ -19,6 +21,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Gitleaks
         run: |
@@ -97,31 +101,20 @@ jobs:
           COSIGN_EXPERIMENTAL: "true"
         run: |
           cosign sign --yes ${{ env.IMAGE }}
-          
-      - name: Update Deployment Image
-        run: |
-          sed -i "s|IMAGE_PLACEHOLDER|${IMAGE}|g" task2/deploy/deployment.yaml
 
-      - name: Deploy to Kind
+      - name: Update Deployment Manifest
         run: |
-          kubectl apply -f task2/deploy/namespace.yaml
-          kubectl apply -f task2/rbac/
-          kubectl apply -f task2/secrets/
-          kubectl apply -f task2/deploy/configmap.yaml
-          kubectl apply -f task2/deploy/deployment.yaml
-          kubectl apply -f task2/deploy/service.yaml
-          kubectl apply -f task2/ingress/     
-            
-      - name: Wait for Rollout
-        run: |
-          kubectl rollout status deployment/ledger-api -n payments --timeout=120s
+          sed -i "s|image: .*|image: $IMAGE|g" task2/deploy/deployment.yaml
 
-      - name: Verify Deployment
+      - name: Commit Updated Manifest
         run: |
-          kubectl get pods -n payments
-          kubectl get svc -n payments
-          kubectl get ingress -n payments
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-      - name: Deployment Status
-        run: |
-          kubectl describe deployment ledger-api -n payments
+          git add task2/deploy/deployment.yaml
+
+          git diff --cached --quiet && exit 0
+
+          git commit -m "Update image to $IMAGE"
+
+          git push origin HEAD:main
